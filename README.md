@@ -12,4 +12,4 @@ sudo docker-compose up
 
 Try the kabana:
 
-http://<IP>:5601
+http://{IP}:5601
