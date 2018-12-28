@@ -10,6 +10,6 @@ Start the containers:
 sudo docker-compose up
 ````
 
-Try the kabana:
+Try the kibana:
 
 http://{IP}:5601
