@@ -1,0 +1,119 @@
+# Delete index
+DELETE /indy
+DELETE /audit
+
+# Create index
+PUT /indy
+PUT /audit
+
+PUT /indy/_mapping/tracking_summary
+{
+  "properties": {
+    "trackingID": {
+      "type": "text"
+    },
+    "startTime": {
+      "type": "date"
+    },
+    "endTime": {
+      "type": "date"
+    }
+  }
+}
+
+GET /indy/_mapping/tracking_summary
+
+# Create the type
+PUT /audit/_mapping/content_events
+{
+  "properties": {
+    "eventId": {
+      "type": "text"
+    },
+    "sessionId": {
+      "type": "text",
+      "fielddata": true
+    },
+    "nodeId": {
+      "type": "text"
+    },
+    "checksum": {
+      "type": "text"
+    },
+    "targetLocation": {
+      "type": "text"
+    },
+    "targetPath": {
+      "type": "text"
+    },
+    "eventType": {
+      "type": "text"
+    },
+    "requestId": {
+      "type": "text"
+    },
+    "eventVersion": {
+      "type": "integer"
+    },
+    "extra": {
+      "properties": {
+        "trackingId": {
+          "type": "text",
+          "fielddata": true
+        }
+      }
+    }
+  }
+}
+
+GET /audit/_mapping
+
+#DELETE /indy/_mapping
+
+POST /indy/tracking_summary/1
+{"trackingID":"build_002","uploads":["up2","up1"],"downloads":["up2","up1"],"startTime":"2018-12-23","endTime":"2018-12-25"}
+
+GET /indy/tracking_summary/1
+
+# Construct content events data
+POST /audit/content_events/1
+{"sessionId":"build_002","eventType":"ACCESS",
+"checksum": "342u87a600", "extra": {"trackingId":"build_002"}}
+  
+POST /audit/content_events/2
+{"sessionId":"build_002","eventType":"ACCESS",
+"checksum": "342u87a601", "extra": {"trackingId":"build_002"}}
+
+POST /audit/content_events/3
+{"sessionId":"build_002","eventType":"ACCESS",
+"checksum": "342u87a602", "extra": {"trackingId":"build_002"}}
+
+POST /audit/content_events/4
+{"sessionId":"build_001","eventType":"ACCESS",
+"checksum": "342u87a501", "extra": {"trackingId":"build_001"}}
+
+GET /audit/content_events/_search
+{
+  "query": {
+    "term": {
+        "sessionId": "build_002"
+    }
+  }
+}
+
+# Constant score query
+GET /audit/content_events/_search
+{
+  "query": {
+    "constant_score": {
+      "filter": {
+        "term": {
+          "sessionId": "build_002"
+        }
+      }
+    }
+  }
+}
+
+# Bool query
+
