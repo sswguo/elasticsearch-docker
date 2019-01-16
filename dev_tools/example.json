@@ -47,7 +47,8 @@ PUT /audit/_mapping/content_events
       "type": "text"
     },
     "eventType": {
-      "type": "text"
+      "type": "text",
+      "fielddata": true
     },
     "requestId": {
       "type": "text"
