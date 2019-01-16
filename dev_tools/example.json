@@ -55,6 +55,9 @@ PUT /audit/_mapping/content_events
     "eventVersion": {
       "type": "integer"
     },
+    "timestamp":{
+      "type": "date"
+    },
     "extra": {
       "properties": {
         "trackingId": {
@@ -78,25 +81,46 @@ GET /indy/tracking_summary/1
 # Construct content events data
 POST /audit/content_events/1
 {"sessionId":"build_002","eventType":"ACCESS",
-"checksum": "342u87a600", "extra": {"trackingId":"build_002"}}
+"checksum": "342u87a600", "extra": {"trackingId":"build_002"},"timestamp": "2019-01-02T07:45:00.000+08:00"}
   
 POST /audit/content_events/2
 {"sessionId":"build_002","eventType":"ACCESS",
-"checksum": "342u87a601", "extra": {"trackingId":"build_002"}}
+"checksum": "342u87a601", "extra": {"trackingId":"build_002"},"timestamp": "2018-12-10T09:45:00.000+08:00"}
 
 POST /audit/content_events/3
 {"sessionId":"build_002","eventType":"ACCESS",
-"checksum": "342u87a602", "extra": {"trackingId":"build_002"}}
+"checksum": "342u87a602", "extra": {"trackingId":"build_002"},"timestamp": "2019-01-04T21:45:00.000+08:00"}
 
 POST /audit/content_events/4
 {"sessionId":"build_001","eventType":"ACCESS",
-"checksum": "342u87a501", "extra": {"trackingId":"build_001"}}
+"checksum": "342u87a501", "extra": {"trackingId":"build_001"},"timestamp": "2018-09-10T09:33:00.000+08:00"}
+
+POST /audit/content_events/5
+{"sessionId":"build_002","eventType":"STORAGE",
+"checksum": "342u87a601", "extra": {"trackingId":"build_002"},"timestamp": "2017-12-10T13:21:00.000+08:00"}
+
+POST /audit/content_events/6
+{"sessionId":"build_002","eventType":"ACCESS",
+"checksum": "342u87a603", "targetLocation":"/tmp/indy/var/lib/indy/storage/maven/remote-central/org/commonjava/commonjava/12/commonjava-12.pom","targetPath":"org/commonjava/commonjava/12/commonjava-12.pom","extra": {"trackingId":"build_002"}, "timestamp": "2017-06-10T09:45:00.000+08:00"}
 
 GET /audit/content_events/_search
 {
+  "from": 0,
+  "size":10,
   "query": {
     "term": {
-        "sessionId": "build_002"
+        "extra.trackingId": "build_002"
+    }
+  }
+}
+
+GET /audit/content_events/_search
+{
+  "from": 0,
+  "size":10,
+  "query": {
+    "term":{
+      "extra.trackingId":{"value":"build_002"}
     }
   }
 }
@@ -111,6 +135,22 @@ GET /audit/content_events/_search
           "sessionId": "build_002"
         }
       }
+    }
+  }
+}
+
+GET /audit/content_events/_search
+{
+  "query":{
+    "bool":{
+      "must":
+        [
+          {
+            "match":
+          {"extra.trackingId":"build_002"}},
+        {"match":{"eventType": "ACCESS"}}
+        ]
+        
     }
   }
 }
