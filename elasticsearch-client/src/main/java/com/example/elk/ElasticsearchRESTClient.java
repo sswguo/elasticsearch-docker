@@ -101,10 +101,12 @@ public class ElasticsearchRESTClient {
 					.must(QueryBuilders.matchQuery("eventType", "ACCESS"));
 
 			// sorting
-			sourceBuilder.sort(new FieldSortBuilder("timestamp").order(SortOrder.DESC));
+			// sourceBuilder.sort(new FieldSortBuilder("timestamp").order(SortOrder.DESC));
 
 			sourceBuilder.query(queryBuilders);
-
+			
+			/* Set the size to 1 to get the most recent record, together with sorting enabled */
+			//sourceBuilder.size(1);
 			sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
 
 			SearchRequest searchRequest = new SearchRequest();
